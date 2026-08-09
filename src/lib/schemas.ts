@@ -9,7 +9,7 @@ export const taskFormSchema = z.object({
     .string()
     .max(500, 'A descrição deve ter no máximo 500 caracteres')
     .optional(),
-  priority: z.enum(['low', 'medium', 'high']),
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH']),
 })
 
 export type TaskFormData = z.infer<typeof taskFormSchema>

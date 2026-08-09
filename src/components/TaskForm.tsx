@@ -1,10 +1,10 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { taskFormSchema, type TaskFormData } from '../lib/schemas'
-import { useTaskStore } from '../store/taskStore'
+import { useCreateTask } from '../hooks/useTasks'
 
 export function TaskForm() {
-  const addTask = useTaskStore((state) => state.addTask)
+  const { mutate: createTask, isPending } = useCreateTask()
 
   const {
     register,
@@ -13,12 +13,11 @@ export function TaskForm() {
     formState: { errors },
   } = useForm<TaskFormData>({
     resolver: zodResolver(taskFormSchema),
-    defaultValues: { priority: 'medium' },
+    defaultValues: { priority: 'MEDIUM' },
   })
 
   const onSubmit = (data: TaskFormData) => {
-    addTask(data.title, data.description, data.priority)
-    reset()
+    createTask(data, { onSuccess: () => reset() })
   }
 
   return (
@@ -46,16 +45,17 @@ export function TaskForm() {
       </div>
 
       <select {...register('priority')} className="rounded border px-3 py-2">
-        <option value="low">Baixa</option>
-        <option value="medium">Média</option>
-        <option value="high">Alta</option>
+        <option value="LOW">Baixa</option>
+        <option value="MEDIUM">Média</option>
+        <option value="HIGH">Alta</option>
       </select>
 
       <button
         type="submit"
-        className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+        disabled={isPending}
+        className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
       >
-        Adicionar tarefa
+        {isPending ? 'Adicionando...' : 'Adicionar tarefa'}
       </button>
     </form>
   )

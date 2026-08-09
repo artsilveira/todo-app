@@ -1,10 +1,12 @@
-import { useTaskStore } from '../store/taskStore'
+import { useTasks } from '../hooks/useTasks'
 import { TaskItem } from './TaskItem'
 
 export function TaskList() {
-  const tasks = useTaskStore((state) => state.tasks)
+  const { data: tasks, isLoading, isError } = useTasks()
 
-  if (tasks.length === 0) {
+  if (isLoading) return <p className="text-center text-gray-400">Carregando...</p>
+  if (isError) return <p className="text-center text-red-500">Erro ao carregar tarefas.</p>
+  if (!tasks || tasks.length === 0) {
     return <p className="text-center text-gray-400">Nenhuma tarefa ainda.</p>
   }
 

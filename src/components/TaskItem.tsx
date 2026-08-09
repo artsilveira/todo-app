@@ -1,16 +1,16 @@
 import type { Task, TaskStatus } from '../types/task'
-import { useTaskStore } from '../store/taskStore'
+import { useUpdateTaskStatus, useDeleteTask } from '../hooks/useTasks'
 
 const statusLabels: Record<TaskStatus, string> = {
-  pending: 'Pendente',
-  'in-progress': 'Em progresso',
-  completed: 'Concluída',
+  PENDING: 'Pendente',
+  IN_PROGRESS: 'Em progresso',
+  COMPLETED: 'Concluída',
 }
 
 const priorityColors: Record<Task['priority'], string> = {
-  low: 'bg-gray-200 text-gray-700',
-  medium: 'bg-yellow-200 text-yellow-800',
-  high: 'bg-red-200 text-red-800',
+  LOW: 'bg-gray-200 text-gray-700',
+  MEDIUM: 'bg-yellow-200 text-yellow-800',
+  HIGH: 'bg-red-200 text-red-800',
 }
 
 interface TaskItemProps {
@@ -18,8 +18,8 @@ interface TaskItemProps {
 }
 
 export function TaskItem({ task }: TaskItemProps) {
-  const updateStatus = useTaskStore((state) => state.updateStatus)
-  const deleteTask = useTaskStore((state) => state.deleteTask)
+  const { mutate: updateStatus } = useUpdateTaskStatus()
+  const { mutate: removeTask } = useDeleteTask()
 
   return (
     <div className="flex items-center justify-between rounded border p-3">
@@ -27,7 +27,7 @@ export function TaskItem({ task }: TaskItemProps) {
         <div className="flex items-center gap-2">
           <h3
             className={
-              task.status === 'completed'
+              task.status === 'COMPLETED'
                 ? 'font-medium line-through text-gray-400'
                 : 'font-medium'
             }
@@ -48,7 +48,9 @@ export function TaskItem({ task }: TaskItemProps) {
       <div className="flex items-center gap-2">
         <select
           value={task.status}
-          onChange={(e) => updateStatus(task.id, e.target.value as TaskStatus)}
+          onChange={(e) =>
+            updateStatus({ id: task.id, status: e.target.value as TaskStatus })
+          }
           className="rounded border px-2 py-1 text-sm"
         >
           {Object.entries(statusLabels).map(([value, label]) => (
@@ -59,7 +61,7 @@ export function TaskItem({ task }: TaskItemProps) {
         </select>
 
         <button
-          onClick={() => deleteTask(task.id)}
+          onClick={() => removeTask(task.id)}
           className="rounded px-2 py-1 text-sm text-red-600 hover:bg-red-50"
         >
           Excluir
