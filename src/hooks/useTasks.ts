@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { fetchTasks, createTask, updateTaskStatus, deleteTask } from '../lib/api'
-import type { TaskStatus } from '../types/task'
+import { fetchTasks, createTask, updateTask, updateTaskStatus, deleteTask } from '../lib/api'
+import type { Task, TaskStatus } from '../types/task'
 
 export function useTasks() {
   return useQuery({
@@ -14,6 +14,23 @@ export function useCreateTask() {
 
   return useMutation({
     mutationFn: createTask,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] })
+    },
+  })
+}
+
+export function useUpdateTask() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string
+      data: { title: string; description?: string; priority: Task['priority'] }
+    }) => updateTask(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] })
     },

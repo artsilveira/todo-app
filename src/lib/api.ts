@@ -22,6 +22,19 @@ export async function createTask(data: {
   return response.json()
 }
 
+export async function updateTask(
+  id: string,
+  data: { title: string; description?: string; priority: Task['priority'] }
+): Promise<Task> {
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+  if (!response.ok) throw new Error('Erro ao editar tarefa')
+  return response.json()
+}
+
 export async function updateTaskStatus(id: string, status: TaskStatus): Promise<Task> {
   const response = await fetch(`${API_URL}/${id}/status`, {
     method: 'PATCH',
