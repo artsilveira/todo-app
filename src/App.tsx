@@ -1,5 +1,6 @@
 import { TaskForm } from './components/TaskForm'
 import { TaskList } from './components/TaskList'
+import { DayProgress } from './components/DayProgress'
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <div className="rounded-lg border border-border bg-surface p-6 shadow-[0_8px_30px_var(--color-shadow)]">
           <TaskForm />
           <div className="mt-6 border-t border-border pt-6">
+            <DayProgress />
             <TaskList />
           </div>
         </div>
